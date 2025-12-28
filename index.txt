@@ -1,0 +1,510 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Math Puzzle – Naija Student Toolbox</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 20px 15px;
+      background: linear-gradient(135deg, #f0f7f4 0%, #e8f5e9 100%);
+      color: #2d3748;
+      min-height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px 0;
+      background: linear-gradient(rgba(11,102,35,0.85), rgba(11,102,35,0.85)), url('https://thumbs.dreamstime.com/b/waving-green-white-shape-d-design-background-good-template-nigeria-independence-day-campaign-335092978.jpg') center/cover;
+      border-radius: 16px;
+      color: white;
+    }
+
+    h1 { font-size: 28px; margin: 0 0 8px 0; }
+    p.subtitle { font-size: 16px; margin: 0; opacity: 0.95; }
+
+    .puzzle-card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 12px 35px rgba(11,102,35,0.15);
+    }
+
+    .timer {
+      text-align: center;
+      font-size: 32px;
+      font-weight: 700;
+      color: #dc2626;
+      margin-bottom: 20px;
+    }
+
+    .day { font-size: 18px; color: #0b6623; font-weight: 600; text-align: center; margin-bottom: 10px; }
+
+    .question {
+      font-size: 22px;
+      font-weight: 600;
+      margin: 30px 0;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .options {
+      display: grid;
+      gap: 12px;
+      margin: 30px 0;
+    }
+
+    .option-btn {
+      padding: 16px;
+      font-size: 18px;
+      background: #f1f5f9;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .option-btn:hover { background: #e0f2fe; border-color: #0b6623; }
+    .option-btn.correct { background: #d4edda; border-color: #0b6623; }
+    .option-btn.wrong { background: #f8d7da; border-color: #dc3545; }
+    .option-btn:disabled { cursor: not-allowed; opacity: 0.7; }
+
+    #submit-btn {
+      background: linear-gradient(to right, #0b6623, #1e8449);
+      color: white;
+      padding: 16px 32px;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 20px auto;
+      display: block;
+    }
+
+    #submit-btn:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    #result {
+      display: none;
+      margin-top: 30px;
+      padding: 25px;
+      background: #f0fdf4;
+      border-radius: 16px;
+      border: 2px solid #bbf7d0;
+      text-align: center;
+    }
+
+    .result-locked {
+      background: #fef3c7 !important;
+      border-color: #fbbf24 !important;
+    }
+
+    .score { font-size: 36px; font-weight: 700; color: #0b6623; }
+    .time-taken { font-size: 24px; color: #16a34a; margin: 15px 0; }
+    .explanation { margin-top: 20px; font-size: 16px; line-height: 1.6; }
+
+    .leaderboard {
+      margin-top: 40px;
+      padding: 20px;
+      background: #f8fafc;
+      border-radius: 16px;
+    }
+
+    .leaderboard h3 { text-align: center; color: #0b6623; margin-bottom: 15px; }
+    .leaderboard ol { padding-left: 20px; }
+    .leaderboard li { padding: 8px 0; font-size: 16px; }
+
+    .share-hint {
+      margin-top: 25px;
+      font-size: 15px;
+      color: #16a34a;
+      font-weight: 600;
+    }
+
+    .save-btn {
+      background: #0b6623;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .save-btn:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    #playerName {
+      width: 100%;
+      padding: 12px;
+      margin: 20px 0;
+      border-radius: 12px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    .attempts-info {
+      background: #fef3c7;
+      border: 2px solid #fbbf24;
+      padding: 15px;
+      border-radius: 12px;
+      margin: 20px 0;
+      font-size: 15px;
+      color: #92400e;
+      font-weight: 500;
+    }
+
+    .locked-message {
+      font-size: 18px;
+      color: #dc2626;
+      font-weight: 600;
+      margin: 15px 0;
+    }
+
+    .anti-cheat-notice {
+      text-align: center;
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 20px;
+      padding: 10px;
+      background: #f1f5f9;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 480px) {
+      .question { font-size: 20px; }
+      .timer { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Daily Math Puzzle</h1>
+    <p class="subtitle">Beat the clock & climb the leaderboard!</p>
+  </header>
+
+  <div class="puzzle-card">
+    <div class="day" id="puzzleDay">Loading...</div>
+    <div class="timer" id="timer">30</div>
+    <div class="question" id="question"></div>
+
+    <div class="options" id="options"></div>
+
+    <button id="submit-btn" onclick="checkAnswer()">Submit Answer</button>
+
+    <div id="result">
+      <div class="score" id="scoreText"></div>
+      <div class="time-taken" id="timeTaken"></div>
+      <div class="explanation" id="explanation"></div>
+
+      <div id="saveSection">
+        <input type="text" id="playerName" placeholder="Enter your name for leaderboard" maxlength="30">
+        <button class="save-btn" id="saveBtn" onclick="saveScore()">Save to Leaderboard</button>
+        <div class="share-hint">Screenshot this result & share to enter giveaways! 📸</div>
+      </div>
+    </div>
+
+    <div class="leaderboard">
+      <h3>🏆 Today's Leaderboard</h3>
+      <ol id="leaderboardList">
+        <li>No scores yet — be the first!</li>
+      </ol>
+    </div>
+
+    <div class="anti-cheat-notice">
+      🔒 Fair Play: One attempt per device per day • Incognito mode won't reset your attempt
+    </div>
+  </div>
+
+  <script>
+    const puzzles = [
+      { question: "If sin(30°) = 0.5 and cos(60°) = 0.5, what is sin(30°) + cos(60°) + tan(45°)?", options: ["1", "2", "1.5", "3"], correct: 1, explanation: "sin(30°) = 0.5<br>cos(60°) = 0.5<br>tan(45°) = 1<br>Total = <strong>2</strong>" },
+      { question: "Solve for x: 2x + 8 = 20", options: ["x = 4", "x = 6", "x = 10", "x = 12"], correct: 1, explanation: "2x = 12 → x = <strong>6</strong>" },
+      { question: "What is √(16 × 9)?", options: ["12", "25", "144", "7"], correct: 0, explanation: "√144 = <strong>12</strong>" },
+      { question: "Triangle angles 40° and 60° — third angle?", options: ["70°", "80°", "90°", "100°"], correct: 1, explanation: "180° - 100° = <strong>80°</strong>" },
+      { question: "25% of 80?", options: ["15", "20", "25", "30"], correct: 1, explanation: "0.25 × 80 = <strong>20</strong>" },
+      { question: "Simplify (x²)⁴", options: ["x⁶", "x⁸", "x¹⁶", "4x⁸"], correct: 1, explanation: "x^(8) = <strong>x⁸</strong>" },
+      { question: "Area of circle radius 7 (π=22/7)", options: ["44", "77", "154", "308"], correct: 2, explanation: "πr² = (22/7) × 49 = <strong>154</strong>" },
+      { question: "log₁₀(1000) = ?", options: ["2", "3", "4", "10"], correct: 1, explanation: "10³ = 1000 → <strong>3</strong>" },
+      { question: "3(x - 5) = 12", options: ["x=7", "x=9", "x=3", "x=5"], correct: 1, explanation: "x - 5 = 4 → x = <strong>9</strong>" },
+      { question: "Next: 2, 6, 12, 20, ?", options: ["24", "30", "36", "42"], correct: 1, explanation: "Pattern: n(n+1) where n=5 → <strong>30</strong>" }
+    ];
+
+    async function generateDeviceFingerprint() {
+      const components = [];
+      
+      components.push(navigator.userAgent);
+      components.push(navigator.language);
+      components.push(screen.width + 'x' + screen.height);
+      components.push(screen.colorDepth);
+      components.push(new Date().getTimezoneOffset());
+      components.push(navigator.hardwareConcurrency || 'unknown');
+      components.push(navigator.platform);
+      components.push(navigator.maxTouchPoints || 0);
+      
+      try {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.textBaseline = 'top';
+        ctx.font = '14px Arial';
+        ctx.fillText('naija-puzzle', 2, 2);
+        components.push(canvas.toDataURL());
+      } catch(e) {
+        components.push('canvas-error');
+      }
+
+      const fingerprint = components.join('|||');
+      
+      const msgBuffer = new TextEncoder().encode(fingerprint);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      
+      return hashHex;
+    }
+
+    const today = new Date();
+    const todayKey = today.toISOString().slice(0, 10);
+    const puzzleIndex = today.getDate() % puzzles.length;
+    const puzzle = puzzles[puzzleIndex];
+
+    document.getElementById('puzzleDay').textContent = `Puzzle of the Day – ${today.toLocaleDateString('en-GB')}`;
+    document.getElementById('question').innerHTML = puzzle.question;
+
+    const optionsContainer = document.getElementById('options');
+    puzzle.options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.textContent = opt;
+      btn.onclick = () => selectOption(btn, i);
+      optionsContainer.appendChild(btn);
+    });
+
+    let selectedIndex = -1;
+    let timerInterval;
+    let timeLeft = 30;
+    let startTime;
+    let hasSubmitted = false;
+    let deviceId = null;
+
+    async function checkPreviousAttempt() {
+      deviceId = await generateDeviceFingerprint();
+      const attemptKey = `attempt_${todayKey}_${deviceId}`;
+      
+      let attempt = localStorage.getItem(attemptKey);
+      
+      if (!attempt) {
+        try {
+          attempt = sessionStorage.getItem(attemptKey);
+        } catch(e) {}
+      }
+      
+      if (attempt) {
+        const data = JSON.parse(attempt);
+        hasSubmitted = true;
+        showLockedResult(data);
+        return true;
+      }
+      return false;
+    }
+
+    function showLockedResult(data) {
+      document.querySelectorAll('.option-btn').forEach((btn, i) => {
+        if (i === puzzle.correct) btn.classList.add('correct');
+        if (i === data.selectedIndex && !data.isCorrect) btn.classList.add('wrong');
+        btn.onclick = null;
+        btn.disabled = true;
+      });
+
+      document.getElementById('submit-btn').style.display = 'none';
+      document.getElementById('timer').textContent = '—';
+      
+      const resultDiv = document.getElementById('result');
+      resultDiv.style.display = 'block';
+      resultDiv.classList.add('result-locked');
+      
+      document.getElementById('scoreText').textContent = data.isCorrect ? "Correct! 🎉" : (data.selectedIndex === -1 ? "Time's Up! ⏰" : "Wrong Answer 😅");
+      document.getElementById('timeTaken').innerHTML = `Time: ${data.timeTaken}s<br><div class="locked-message">⚠️ You've already attempted today's puzzle</div>`;
+      document.getElementById('explanation').innerHTML = puzzle.explanation;
+      
+      if (!data.isCorrect) {
+        document.getElementById('saveSection').innerHTML = '<div class="attempts-info">❌ You can only save correct answers to the leaderboard.<br>Come back tomorrow for a new puzzle!</div>';
+      } else if (data.saved) {
+        document.getElementById('saveSection').innerHTML = '<div class="attempts-info">✓ Your score has already been saved!</div>';
+      } else {
+        document.getElementById('playerName').focus();
+      }
+    }
+
+    function startTimer() {
+      startTime = Date.now();
+      document.getElementById('timer').textContent = timeLeft;
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timer').textContent = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          if (!hasSubmitted) {
+            endPuzzle(false, 30, -1);
+          }
+        }
+      }, 1000);
+    }
+
+    function selectOption(btn, index) {
+      if (hasSubmitted) return;
+      
+      document.querySelectorAll('.option-btn').forEach(b => {
+        b.style.background = '#f1f5f9';
+        b.style.borderColor = '#e2e8f0';
+      });
+      btn.style.background = '#dbeafe';
+      btn.style.borderColor = '#0b6623';
+      selectedIndex = index;
+    }
+
+    function checkAnswer() {
+      if (selectedIndex === -1) {
+        alert("Please select an answer!");
+        return;
+      }
+      if (hasSubmitted) return;
+      
+      hasSubmitted = true;
+      clearInterval(timerInterval);
+      const timeTaken = 30 - timeLeft;
+      const isCorrect = selectedIndex === puzzle.correct;
+      endPuzzle(isCorrect, timeTaken, selectedIndex);
+    }
+
+    function endPuzzle(isCorrect, timeTaken, selected) {
+      hasSubmitted = true;
+      
+      const attemptData = {
+        isCorrect,
+        timeTaken,
+        selectedIndex: selected,
+        timestamp: Date.now(),
+        saved: false
+      };
+      
+      const attemptKey = `attempt_${todayKey}_${deviceId}`;
+      
+      try {
+        localStorage.setItem(attemptKey, JSON.stringify(attemptData));
+      } catch(e) {
+        console.warn('localStorage unavailable');
+      }
+      
+      try {
+        sessionStorage.setItem(attemptKey, JSON.stringify(attemptData));
+      } catch(e) {
+        console.warn('sessionStorage unavailable');
+      }
+      
+      document.querySelectorAll('.option-btn').forEach((btn, i) => {
+        if (i === puzzle.correct) btn.classList.add('correct');
+        else if (i === selectedIndex && !isCorrect) btn.classList.add('wrong');
+        btn.onclick = null;
+        btn.disabled = true;
+      });
+
+      document.getElementById('submit-btn').style.display = 'none';
+      document.getElementById('scoreText').textContent = isCorrect ? "Correct! 🎉" : (selectedIndex === -1 ? "Time's Up! ⏰" : "Wrong Answer 😅");
+      document.getElementById('timeTaken').textContent = `Time: ${timeTaken} seconds`;
+      document.getElementById('explanation').innerHTML = puzzle.explanation;
+      document.getElementById('result').style.display = 'block';
+
+      if (!isCorrect) {
+        document.getElementById('saveSection').innerHTML = '<div class="attempts-info">❌ Only correct answers can be saved to the leaderboard.<br>Come back tomorrow for a new puzzle!</div>';
+      } else {
+        document.getElementById('playerName').focus();
+      }
+    }
+
+    function saveScore() {
+      const attemptKey = `attempt_${todayKey}_${deviceId}`;
+      let attempt = localStorage.getItem(attemptKey) || sessionStorage.getItem(attemptKey);
+      
+      if (!attempt) {
+        alert("Error: Could not find your attempt data.");
+        return;
+      }
+      
+      attempt = JSON.parse(attempt);
+      
+      if (!attempt.isCorrect) {
+        alert("Only correct answers can be saved to the leaderboard!");
+        return;
+      }
+
+      if (attempt.saved) {
+        alert("You've already saved your score!");
+        return;
+      }
+      
+      const name = document.getElementById('playerName').value.trim() || "Anonymous";
+      const { timeTaken } = attempt;
+
+      const leaderboardKey = `leaderboard_${todayKey}`;
+      let board = JSON.parse(localStorage.getItem(leaderboardKey) || "[]");
+
+      board.push({ name, time: timeTaken, deviceId: deviceId.substring(0, 8) });
+      board.sort((a, b) => a.time - b.time);
+      board = board.slice(0, 10);
+
+      localStorage.setItem(leaderboardKey, JSON.stringify(board));
+      
+      attempt.saved = true;
+      try {
+        localStorage.setItem(attemptKey, JSON.stringify(attempt));
+        sessionStorage.setItem(attemptKey, JSON.stringify(attempt));
+      } catch(e) {}
+      
+      displayLeaderboard(board);
+      
+      document.getElementById('saveBtn').disabled = true;
+      document.getElementById('saveBtn').textContent = "Saved! ✓";
+      document.getElementById('playerName').disabled = true;
+    }
+
+    function displayLeaderboard(board) {
+      const list = document.getElementById('leaderboardList');
+      list.innerHTML = board.length ? '' : '<li>No scores yet — be the first!</li>';
+      board.forEach((entry, i) => {
+        const li = document.createElement('li');
+        const medal = i === 0 ? '🥇 ' : i === 1 ? '🥈 ' : i === 2 ? '🥉 ' : '';
+        li.innerHTML = `${medal}<strong>${i + 1}.</strong> ${entry.name} — ${entry.time}s`;
+        list.appendChild(li);
+      });
+    }
+
+    async function init() {
+      const hasAttempted = await checkPreviousAttempt();
+      if (!hasAttempted) {
+        startTimer();
+      }
+      
+      const leaderboardKey = `leaderboard_${todayKey}`;
+      const savedBoard = JSON.parse(localStorage.getItem(leaderboardKey) || "[]");
+      displayLeaderboard(savedBoard);
+    }
+
+    init();
+  </script>
+
+</body>
+</html>
