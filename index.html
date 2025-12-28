@@ -1,568 +1,396 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daily Math Puzzle – Naija Student Toolbox</title>
+  <title>Scientific Calculator – Naija Student Toolbox</title>
+  <meta property="og:title" content="Free Online Scientific Calculator for Nigerian Students">
+  <meta property="og:description" content="Powerful scientific calculator with trig, logs, exponents – perfect for WAEC, JAMB & university exams!">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+    :root {
+      --bg-gradient: linear-gradient(135deg, #f0f7f4 0%, #e8f5e9 100%);
+      --header-bg: linear-gradient(rgba(11,102,35,0.85), rgba(11,102,35,0.85)), url('https://thumbs.dreamstime.com/b/waving-green-white-shape-d-design-background-good-template-nigeria-independence-day-campaign-335092978.jpg');
+      --card-bg: white;
+      --text-primary: #2d3748;
+      --text-secondary: #4a5568;
+      --input-bg: #f8fafc;
+      --input-border: #e2e8f0;
+      --shadow: 0 12px 35px rgba(11,102,35,0.15);
+      --button-number: #f1f5f9;
+      --button-operator: #0b6623;
+      --button-func: #334155;
+      --button-clear: #991b1b;
+      --button-equals: #dc2626;
+    }
+
+    [data-theme="dark"] {
+      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      --header-bg: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://thumbs.dreamstime.com/b/waving-green-white-shape-d-design-background-good-template-nigeria-independence-day-campaign-335092978.jpg');
+      --card-bg: #1e293b;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --input-bg: #334155;
+      --input-border: #475569;
+      --shadow: 0 12px 35px rgba(0,0,0,0.4);
+      --button-number: #334155;
+      --button-operator: #16a34a;
+      --button-func: #475569;
+      --button-clear: #dc2626;
+      --button-equals: #ef4444;
+    }
 
     body {
       font-family: 'Poppins', sans-serif;
       max-width: 640px;
       margin: 0 auto;
       padding: 20px 15px;
-      background: linear-gradient(135deg, #f0f7f4 0%, #e8f5e9 100%);
-      color: #2d3748;
+      background: var(--bg-gradient);
+      color: var(--text-primary);
       min-height: 100vh;
+      transition: background 0.4s ease;
     }
 
     header {
       text-align: center;
       margin-bottom: 30px;
       padding: 20px 0;
-      background: linear-gradient(rgba(11,102,35,0.85), rgba(11,102,35,0.85)), url('https://thumbs.dreamstime.com/b/waving-green-white-shape-d-design-background-good-template-nigeria-independence-day-campaign-335092978.jpg') center/cover;
+      background: var(--header-bg) center/cover;
       border-radius: 16px;
       color: white;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.4);
     }
 
     h1 { font-size: 28px; margin: 0 0 8px 0; }
     p.subtitle { font-size: 16px; margin: 0; opacity: 0.95; }
 
-    .puzzle-card {
-      background: white;
+    .calculator {
+      background: var(--card-bg);
       border-radius: 20px;
-      padding: 30px;
-      box-shadow: 0 12px 35px rgba(11,102,35,0.15);
+      padding: 25px;
+      box-shadow: var(--shadow);
+      transition: background 0.4s ease, box-shadow 0.4s ease;
     }
 
-    .timer {
-      text-align: center;
+    #display {
+      width: 100%;
+      height: 80px;
       font-size: 32px;
-      font-weight: 700;
-      color: #dc2626;
+      text-align: right;
+      padding: 15px;
+      border: 1px solid var(--input-border);
+      border-radius: 14px;
+      background: var(--input-bg);
+      color: var(--text-primary);
+      margin-bottom: 15px;
+      box-sizing: border-box;
+      overflow-x: auto;
+      white-space: nowrap;
+      transition: all 0.4s;
+    }
+
+    .quote-container {
+      overflow: hidden;
+      background: linear-gradient(90deg, var(--button-operator), #16a34a);
+      border-radius: 10px;
+      padding: 10px 0;
       margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(11,102,35,0.2);
     }
 
-    .day { font-size: 18px; color: #0b6623; font-weight: 600; text-align: center; margin-bottom: 10px; }
+    .quote-text {
+      display: inline-block;
+      white-space: nowrap;
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      animation: scroll-left 20s linear infinite;
+      padding-left: 100%;
+    }
 
-    .question {
-      font-size: 22px;
-      font-weight: 600;
-      margin: 30px 0;
-      line-height: 1.5;
+    @keyframes scroll-left {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-100%);
+      }
+    }
+
+    .mode-toggle {
       text-align: center;
+      margin: 20px 0;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
     }
 
-    .options {
-      display: grid;
-      gap: 12px;
-      margin: 30px 0;
-    }
-
-    .option-btn {
-      padding: 16px;
-      font-size: 18px;
-      background: #f1f5f9;
-      border: 2px solid #e2e8f0;
+    .mode-toggle button {
+      padding: 10px 20px;
+      background: var(--input-bg);
+      color: var(--text-secondary);
+      border: 1px solid var(--input-border);
       border-radius: 12px;
+      font-weight: 500;
       cursor: pointer;
       transition: all 0.3s;
     }
 
-    .option-btn:hover { background: #e0f2fe; border-color: #0b6623; }
-    .option-btn.correct { background: #d4edda; border-color: #0b6623; }
-    .option-btn.wrong { background: #f8d7da; border-color: #dc3545; }
-    .option-btn:disabled { cursor: not-allowed; opacity: 0.7; }
-
-    #submit-btn {
-      background: linear-gradient(to right, #0b6623, #1e8449);
+    .mode-toggle button.active {
+      background: var(--button-operator);
       color: white;
-      padding: 16px 32px;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .span-2 {
+      grid-column: span 2;
+    }
+
+    button {
+      padding: 20px;
+      font-size: 18px;
+      font-weight: 600;
       border: none;
-      border-radius: 12px;
-      font-size: 18px;
-      font-weight: 600;
+      border-radius: 14px;
       cursor: pointer;
-      margin: 20px auto;
-      display: block;
+      transition: all 0.2s;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
-    #submit-btn:disabled {
-      background: #94a3b8;
-      cursor: not-allowed;
-    }
+    button:hover { transform: translateY(-2px); }
 
-    #result {
-      display: none;
-      margin-top: 30px;
-      padding: 25px;
-      background: #f0fdf4;
-      border-radius: 16px;
-      border: 2px solid #bbf7d0;
-      text-align: center;
-    }
+    .number, .decimal { background: var(--button-number); color: var(--text-primary); }
+    .operator { background: var(--button-operator); color: white; }
+    .func { background: var(--button-func); color: white; }
+    .clear { background: var(--button-clear); color: white; }
+    .equals { background: var(--button-equals); color: white; }
 
-    .result-locked {
-      background: #fef3c7 !important;
-      border-color: #fbbf24 !important;
-    }
-
-    .score { font-size: 36px; font-weight: 700; color: #0b6623; }
-    .time-taken { font-size: 24px; color: #16a34a; margin: 15px 0; }
-    .explanation { margin-top: 20px; font-size: 16px; line-height: 1.6; }
-
-    .share-hint {
-      margin-top: 25px;
-      font-size: 15px;
-      color: #16a34a;
-      font-weight: 600;
-    }
-
-    .attempts-info {
-      background: #fef3c7;
-      border: 2px solid #fbbf24;
-      padding: 15px;
-      border-radius: 12px;
-      margin: 20px 0;
-      font-size: 15px;
-      color: #92400e;
-      font-weight: 500;
-    }
-
-    .locked-message {
-      font-size: 18px;
-      color: #dc2626;
-      font-weight: 600;
-      margin: 15px 0;
-    }
-
-    .honesty-quote {
-      text-align: center;
-      font-size: 14px;
-      color: #475569;
-      margin-top: 20px;
-      padding: 15px;
-      background: linear-gradient(135deg, #f1f5f9 0%, #e0f2fe 100%);
-      border-radius: 8px;
-      font-style: italic;
-      border-left: 4px solid #0b6623;
-      transition: opacity 0.5s ease;
-    }
-    
-    .honesty-quote strong {
-      color: #0b6623;
-      font-weight: 600;
-    }
-
-    .share-section {
-      margin-top: 30px;
-      padding: 25px;
-      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-      border-radius: 16px;
-      border: 2px solid #e2e8f0;
-      text-align: center;
-    }
-
-    .share-section h3 {
-      color: #0b6623;
-      font-size: 20px;
-      margin: 0 0 15px 0;
-    }
-
-    .share-buttons {
+    .theme-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 50%;
+      width: 56px;
+      height: 56px;
       display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 15px;
-    }
-
-    .share-btn {
-      display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 600;
+      justify-content: center;
       cursor: pointer;
-      transition: all 0.3s ease;
-      color: white;
-      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      font-size: 24px;
+      z-index: 100;
+      transition: all 0.3s;
     }
 
-    .share-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-    }
-
-    .share-btn:active {
-      transform: translateY(0);
-    }
-
-    .share-btn.whatsapp {
-      background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-    }
-
-    .share-btn.twitter {
-      background: linear-gradient(135deg, #1DA1F2 0%, #0d8bd9 100%);
-    }
-
-    .share-btn.facebook {
-      background: linear-gradient(135deg, #1877F2 0%, #0d5ebd 100%);
-    }
-
-    .share-btn.telegram {
-      background: linear-gradient(135deg, #0088cc 0%, #006699 100%);
-    }
-
-    .share-btn.copy {
-      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-    }
-
-    .share-btn svg {
-      width: 20px;
-      height: 20px;
-      fill: currentColor;
-    }
+    .theme-toggle:hover { transform: scale(1.1); }
 
     @media (max-width: 480px) {
-      .share-btn {
-        padding: 10px 16px;
-        font-size: 14px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .question { font-size: 20px; }
-      .timer { font-size: 28px; }
+      button { padding: 16px; font-size: 16px; }
+      #display { font-size: 28px; height: 70px; }
+      .theme-toggle { bottom: 15px; right: 15px; width: 50px; height: 50px; font-size: 22px; }
     }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>Daily Math Puzzle</h1>
-    <p class="subtitle">Beat the clock & test your skills!</p>
+    <h1>Scientific Calculator</h1>
+    <p class="subtitle">Free, fast & powerful – perfect for WAEC, JAMB, Physics, Chemistry & Maths</p>
   </header>
 
-  <div class="puzzle-card">
-    <div class="day" id="puzzleDay">Loading...</div>
-    <div class="timer" id="timer">30</div>
-    <div class="question" id="question"></div>
+  <div class="calculator">
+    <input type="text" id="display" readonly placeholder="0">
 
-    <div class="options" id="options"></div>
-
-    <button id="submit-btn" onclick="checkAnswer()">Submit Answer</button>
-
-    <div id="result">
-      <div class="score" id="scoreText"></div>
-      <div class="time-taken" id="timeTaken"></div>
-      <div class="explanation" id="explanation"></div>
-
-      <div class="share-hint">Screenshot this result & share with friends! 📸</div>
+    <div class="quote-container">
+      <div class="quote-text" id="quote">Mathematics is not about numbers, it's about understanding. Keep pushing forward! 🚀</div>
     </div>
 
-    <div class="honesty-quote" id="honestyQuote">
-      Loading...
+    <div class="mode-toggle">
+      <button id="deg" class="active">DEG</button>
+      <button id="rad">RAD</button>
     </div>
 
-    <div class="share-section">
-      <h3>📢 Share This Puzzle!</h3>
-      <p style="color: #64748b; margin: 10px 0;">Challenge your friends with today's math puzzle</p>
-      <div class="share-buttons">
-        <button class="share-btn whatsapp" onclick="shareOnWhatsApp()">
-          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-          WhatsApp
-        </button>
-        
-        <button class="share-btn twitter" onclick="shareOnTwitter()">
-          <svg viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
-          Twitter
-        </button>
-        
-        <button class="share-btn facebook" onclick="shareOnFacebook()">
-          <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-          Facebook
-        </button>
-        
-        <button class="share-btn telegram" onclick="shareOnTelegram()">
-          <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-          Telegram
-        </button>
-        
-        <button class="share-btn copy" onclick="copyLink()">
-          <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-          Copy Link
-        </button>
-      </div>
+    <div class="buttons">
+      <button class="func" onclick="appendToDisplay('sin(')">sin</button>
+      <button class="func" onclick="appendToDisplay('cos(')">cos</button>
+      <button class="func" onclick="appendToDisplay('tan(')">tan</button>
+      <button class="func" onclick="appendToDisplay('log(')">log</button>
+
+      <button class="func" onclick="appendToDisplay('ln(')">ln</button>
+      <button class="func" onclick="appendToDisplay('√(')">√</button>
+      <button class="func" onclick="appendToDisplay('(')">(</button>
+      <button class="func" onclick="appendToDisplay(')')">)</button>
+
+      <button class="func" onclick="appendToDisplay('^')">^</button>
+      <button class="func" onclick="appendToDisplay('π')">π</button>
+      <button class="clear" onclick="clearDisplay()">C</button>
+      <button class="clear" onclick="deleteLast()">⌫</button>
+
+      <button class="number" onclick="appendToDisplay('7')">7</button>
+      <button class="number" onclick="appendToDisplay('8')">8</button>
+      <button class="number" onclick="appendToDisplay('9')">9</button>
+      <button class="operator" onclick="appendToDisplay('/')">÷</button>
+
+      <button class="number" onclick="appendToDisplay('4')">4</button>
+      <button class="number" onclick="appendToDisplay('5')">5</button>
+      <button class="number" onclick="appendToDisplay('6')">6</button>
+      <button class="operator" onclick="appendToDisplay('*')">×</button>
+
+      <button class="number" onclick="appendToDisplay('1')">1</button>
+      <button class="number" onclick="appendToDisplay('2')">2</button>
+      <button class="number" onclick="appendToDisplay('3')">3</button>
+      <button class="operator" onclick="appendToDisplay('-')">−</button>
+
+      <button class="number span-2" onclick="appendToDisplay('0')">0</button>
+      <button class="decimal" onclick="appendToDisplay('.')">.</button>
+      <button class="operator" onclick="appendToDisplay('+')">+</button>
+
+      <button class="equals span-2" onclick="calculate()">=</button>
     </div>
   </div>
 
+  <div class="theme-toggle" id="themeToggle" title="Toggle Dark Mode">
+    🌙
+  </div>
+
   <script>
-    const puzzles = [
-      { question: "If sin(30°) = 0.5 and cos(60°) = 0.5, what is sin(30°) + cos(60°) + tan(45°)?", options: ["1", "2", "1.5", "3"], correct: 1, explanation: "sin(30°) = 0.5<br>cos(60°) = 0.5<br>tan(45°) = 1<br>Total = <strong>2</strong>" },
-      { question: "Solve for x: 2x + 8 = 20", options: ["x = 4", "x = 6", "x = 10", "x = 12"], correct: 1, explanation: "2x = 12 → x = <strong>6</strong>" },
-      { question: "What is √(16 × 9)?", options: ["12", "25", "144", "7"], correct: 0, explanation: "√144 = <strong>12</strong>" },
-      { question: "Triangle angles 40° and 60° — third angle?", options: ["70°", "80°", "90°", "100°"], correct: 1, explanation: "180° - 100° = <strong>80°</strong>" },
-      { question: "25% of 80?", options: ["15", "20", "25", "30"], correct: 1, explanation: "0.25 × 80 = <strong>20</strong>" },
-      { question: "Simplify (x²)⁴", options: ["x⁶", "x⁸", "x¹⁶", "4x⁸"], correct: 1, explanation: "x^(8) = <strong>x⁸</strong>" },
-      { question: "Area of circle radius 7 (π=22/7)", options: ["44", "77", "154", "308"], correct: 2, explanation: "πr² = (22/7) × 49 = <strong>154</strong>" },
-      { question: "log₁₀(1000) = ?", options: ["2", "3", "4", "10"], correct: 1, explanation: "10³ = 1000 → <strong>3</strong>" },
-      { question: "3(x - 5) = 12", options: ["x=7", "x=9", "x=3", "x=5"], correct: 1, explanation: "x - 5 = 4 → x = <strong>9</strong>" },
-      { question: "Next: 2, 6, 12, 20, ?", options: ["24", "30", "36", "42"], correct: 1, explanation: "Pattern: n(n+1) where n=5 → <strong>30</strong>" }
+    // Motivational quotes rotation
+    const quotes = [
+      "Mathematics is not about numbers, it's about understanding. Keep pushing forward! 🚀",
+      "Every expert was once a beginner. Your hard work will pay off! 💪",
+      "WAEC & JAMB success starts with practice. You've got this! ⭐",
+      "The only way to learn mathematics is to do mathematics. Keep calculating! 📊",
+      "Believe in yourself. Your potential is limitless! 🌟",
+      "Success is the sum of small efforts repeated day in and day out. 📈"
     ];
+    
+    let currentQuoteIndex = 0;
+    const quoteElement = document.getElementById('quote');
+    
+    setInterval(() => {
+      currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
+      quoteElement.textContent = quotes[currentQuoteIndex];
+    }, 20000); // Change quote every 20 seconds (matches animation duration)
 
-    async function generateDeviceFingerprint() {
-      const components = [];
-      
-      components.push(navigator.userAgent);
-      components.push(navigator.language);
-      components.push(screen.width + 'x' + screen.height);
-      components.push(screen.colorDepth);
-      components.push(new Date().getTimezoneOffset());
-      components.push(navigator.hardwareConcurrency || 'unknown');
-      components.push(navigator.platform);
-      components.push(navigator.maxTouchPoints || 0);
-      
-      try {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        ctx.textBaseline = 'top';
-        ctx.font = '14px Arial';
-        ctx.fillText('naija-puzzle', 2, 2);
-        components.push(canvas.toDataURL());
-      } catch(e) {
-        components.push('canvas-error');
-      }
-
-      const fingerprint = components.join('|||');
-      
-      const msgBuffer = new TextEncoder().encode(fingerprint);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-      
-      return hashHex;
+    // Theme handling
+    const themeToggle = document.getElementById('themeToggle');
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    if (savedTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      themeToggle.textContent = '☀️';
     }
 
-    const today = new Date();
-    const todayKey = today.toISOString().slice(0, 10);
-    const puzzleIndex = today.getDate() % puzzles.length;
-    const puzzle = puzzles[puzzleIndex];
-
-    document.getElementById('puzzleDay').textContent = `Puzzle of the Day – ${today.toLocaleDateString('en-GB')}`;
-    document.getElementById('question').innerHTML = puzzle.question;
-
-    const optionsContainer = document.getElementById('options');
-    puzzle.options.forEach((opt, i) => {
-      const btn = document.createElement('button');
-      btn.className = 'option-btn';
-      btn.textContent = opt;
-      btn.onclick = () => selectOption(btn, i);
-      optionsContainer.appendChild(btn);
+    themeToggle.addEventListener('click', () => {
+      const isDark = document.documentElement.hasAttribute('data-theme');
+      if (isDark) {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('theme', 'light');
+        themeToggle.textContent = '🌙';
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+        themeToggle.textContent = '☀️';
+      }
     });
 
-    let selectedIndex = -1;
-    let timerInterval;
-    let timeLeft = 30;
-    let startTime;
-    let hasSubmitted = false;
-    let deviceId = null;
+    // Calculator
+    const display = document.getElementById('display');
+    let isDeg = true;
 
-    const honestyQuotes = [
-      '"<strong>Honesty</strong> is the first chapter in the book of wisdom." – Thomas Jefferson',
-      '"The foundation of success is built on <strong>integrity</strong> and truth." – Nigerian Proverb',
-      '"Your <strong>character</strong> is defined by what you do when no one is watching."',
-      '"<strong>Cheating</strong> only cheats yourself out of real learning and growth."',
-      '"True education comes from <strong>honest effort</strong>, not shortcuts." – Benjamin Franklin'
-    ];
+    document.getElementById('deg').onclick = () => { isDeg = true; toggleMode(); };
+    document.getElementById('rad').onclick = () => { isDeg = false; toggleMode(); };
 
-    let currentQuoteIndex = 0;
-
-    function rotateQuote() {
-      const quoteElement = document.getElementById('honestyQuote');
-      quoteElement.style.opacity = '0';
-      
-      setTimeout(() => {
-        currentQuoteIndex = (currentQuoteIndex + 1) % honestyQuotes.length;
-        quoteElement.innerHTML = honestyQuotes[currentQuoteIndex];
-        quoteElement.style.opacity = '1';
-      }, 500);
+    function toggleMode() {
+      document.getElementById('deg').classList.toggle('active', isDeg);
+      document.getElementById('rad').classList.toggle('active', !isDeg);
     }
 
-    document.getElementById('honestyQuote').innerHTML = honestyQuotes[0];
-
-    setInterval(rotateQuote, 60000);
-
-    function shareOnWhatsApp() {
-      const text = encodeURIComponent('🧮 Challenge yourself with today\'s Daily Math Puzzle! Can you beat the clock? ⏱️');
-      const url = encodeURIComponent(window.location.href);
-      window.open(`https://wa.me/?text=${text}%20${url}`, '_blank');
+    function appendToDisplay(value) {
+      if (display.value === '0' && value !== '.') display.value = '';
+      display.value += value;
     }
 
-    function shareOnTwitter() {
-      const text = encodeURIComponent('🧮 Just tried the Daily Math Puzzle! Challenge yourself and test your skills ⏱️');
-      const url = encodeURIComponent(window.location.href);
-      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+    function clearDisplay() {
+      display.value = '0';
     }
 
-    function shareOnFacebook() {
-      const url = encodeURIComponent(window.location.href);
-      window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+    function deleteLast() {
+      display.value = display.value.slice(0, -1) || '0';
     }
 
-    function shareOnTelegram() {
-      const text = encodeURIComponent('🧮 Challenge yourself with today\'s Daily Math Puzzle!');
-      const url = encodeURIComponent(window.location.href);
-      window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
-    }
+    function calculate() {
+      let expr = display.value.trim();
 
-    function copyLink() {
-      navigator.clipboard.writeText(window.location.href).then(() => {
-        const btn = event.target.closest('.share-btn');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Copied!';
-        setTimeout(() => {
-          btn.innerHTML = originalText;
-        }, 2000);
-      }).catch(() => {
-        alert('Failed to copy link. Please copy manually: ' + window.location.href);
-      });
-    }
-
-    async function checkPreviousAttempt() {
-      deviceId = await generateDeviceFingerprint();
-      const attemptKey = `attempt_${todayKey}_${deviceId}`;
-      
-      let attempt = localStorage.getItem(attemptKey);
-      
-      if (!attempt) {
-        try {
-          attempt = sessionStorage.getItem(attemptKey);
-        } catch(e) {}
-      }
-      
-      if (attempt) {
-        const data = JSON.parse(attempt);
-        hasSubmitted = true;
-        showLockedResult(data);
-        return true;
-      }
-      return false;
-    }
-
-    function showLockedResult(data) {
-      document.querySelectorAll('.option-btn').forEach((btn, i) => {
-        if (i === puzzle.correct) btn.classList.add('correct');
-        if (i === data.selectedIndex && !data.isCorrect) btn.classList.add('wrong');
-        btn.onclick = null;
-        btn.disabled = true;
-      });
-
-      document.getElementById('submit-btn').style.display = 'none';
-      document.getElementById('timer').textContent = '—';
-      
-      const resultDiv = document.getElementById('result');
-      resultDiv.style.display = 'block';
-      resultDiv.classList.add('result-locked');
-      
-      document.getElementById('scoreText').textContent = data.isCorrect ? "Correct! 🎉" : (data.selectedIndex === -1 ? "Time's Up! ⏰" : "Wrong Answer 😅");
-      document.getElementById('timeTaken').innerHTML = `Time: ${data.timeTaken}s<br><div class="locked-message">⚠️ You've already attempted today's puzzle</div>`;
-      document.getElementById('explanation').innerHTML = puzzle.explanation;
-    }
-
-    function startTimer() {
-      startTime = Date.now();
-      document.getElementById('timer').textContent = timeLeft;
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        document.getElementById('timer').textContent = timeLeft;
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          if (!hasSubmitted) {
-            endPuzzle(false, 30, -1);
-          }
-        }
-      }, 1000);
-    }
-
-    function selectOption(btn, index) {
-      if (hasSubmitted) return;
-      
-      document.querySelectorAll('.option-btn').forEach(b => {
-        b.style.background = '#f1f5f9';
-        b.style.borderColor = '#e2e8f0';
-      });
-      btn.style.background = '#dbeafe';
-      btn.style.borderColor = '#0b6623';
-      selectedIndex = index;
-    }
-
-    function checkAnswer() {
-      if (selectedIndex === -1) {
-        alert("Please select an answer!");
+      if (expr === '' || expr === '0') {
+        display.value = '0';
         return;
       }
-      if (hasSubmitted) return;
-      
-      hasSubmitted = true;
-      clearInterval(timerInterval);
-      const timeTaken = 30 - timeLeft;
-      const isCorrect = selectedIndex === puzzle.correct;
-      endPuzzle(isCorrect, timeTaken, selectedIndex);
-    }
 
-    function endPuzzle(isCorrect, timeTaken, selected) {
-      hasSubmitted = true;
-      
-      const attemptData = {
-        isCorrect,
-        timeTaken,
-        selectedIndex: selected,
-        timestamp: Date.now()
-      };
-      
-      const attemptKey = `attempt_${todayKey}_${deviceId}`;
-      
       try {
-        localStorage.setItem(attemptKey, JSON.stringify(attemptData));
-      } catch(e) {
-        console.warn('localStorage unavailable');
-      }
-      
-      try {
-        sessionStorage.setItem(attemptKey, JSON.stringify(attemptData));
-      } catch(e) {
-        console.warn('sessionStorage unavailable');
-      }
-      
-      document.querySelectorAll('.option-btn').forEach((btn, i) => {
-        if (i === puzzle.correct) btn.classList.add('correct');
-        else if (i === selectedIndex && !isCorrect) btn.classList.add('wrong');
-        btn.onclick = null;
-        btn.disabled = true;
-      });
+        // Add implicit multiplication
+        // Between number and function: 3sin -> 3*sin
+        expr = expr.replace(/(\d)(sin|cos|tan|log|ln|√|π|\()/g, '$1*$2');
+        // Between closing paren and number: )3 -> )*3
+        expr = expr.replace(/(\))(\d)/g, '$1*$2');
+        // Between closing paren and function: )sin -> )*sin
+        expr = expr.replace(/(\))(sin|cos|tan|log|ln|√|π|\()/g, '$1*$2');
+        // Between π and number: π3 -> π*3
+        expr = expr.replace(/(π)(\d)/g, '$1*$2');
+        // Between number and π: 3π -> 3*π
+        expr = expr.replace(/(\d)(π)/g, '$1*$2');
 
-      document.getElementById('submit-btn').style.display = 'none';
-      document.getElementById('scoreText').textContent = isCorrect ? "Correct! 🎉" : (selectedIndex === -1 ? "Time's Up! ⏰" : "Wrong Answer 😅");
-      document.getElementById('timeTaken').textContent = `Time: ${timeTaken} seconds`;
-      document.getElementById('explanation').innerHTML = puzzle.explanation;
-      document.getElementById('result').style.display = 'block';
+        // Count trig functions BEFORE any replacements
+        const trigMatches = expr.match(/(sin|cos|tan)\(/g);
+        const trigCount = trigMatches ? trigMatches.length : 0;
+
+        // Replace display symbols with JS equivalents
+        expr = expr
+          .replace(/π/g, 'Math.PI')
+          .replace(/\^/g, '**')
+          .replace(/√\(/g, 'Math.sqrt(')
+          .replace(/log\(/g, 'Math.log10(')
+          .replace(/ln\(/g, 'Math.log(');
+
+        // Handle trig functions
+        if (isDeg) {
+          expr = expr.replace(/(sin|cos|tan)\(/g, 'Math.$1(Math.PI/180 * ');
+          // Add closing parentheses for DEG mode conversions
+          expr += ')'.repeat(trigCount);
+        } else {
+          expr = expr.replace(/(sin|cos|tan)\(/g, 'Math.$1(');
+        }
+
+        // Evaluate safely
+        let result = Function('"use strict"; return (' + expr + ')')();
+
+        // Format result
+        if (Number.isFinite(result)) {
+          display.value = Number(result.toFixed(10));
+        } else {
+          throw new Error('Invalid result');
+        }
+      } catch (e) {
+        display.value = 'Error';
+        setTimeout(() => { display.value = '0'; }, 1500);
+      }
     }
 
-    async function init() {
-      const hasAttempted = await checkPreviousAttempt();
-      if (!hasAttempted) {
-        startTimer();
+    // Allow pressing Enter to calculate
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        calculate();
       }
-    }
-
-    init();
+    });
   </script>
 
 </body>
 </html>
-
